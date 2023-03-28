@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/global.css">
+    <title>Document</title>
+</head>
+<body>
+    <p>REGISTER</p>
+    <form action="http://127.0.0.1:5000/register" method="post">
+        <label for="FName">First Name</label>
+        <input type="text" name="FName">
+        <label for="LName">Last Name</label>
+        <input type="text" name="LName">
+        <label for="Email">Email</label>
+        <input type="text" name="Email">
+        <label for="Password">Password</label>
+        <input type="text" name="Password">
+        <button type="submit">Register</button>
+    </form>
+    <p>LOGIN</p>
+    <form action="http://127.0.0.1:5000/login" method="post">
+        <label for="Email">Email</label>
+        <input type="text" name="Email">
+        <label for="Password">Password</label>
+        <input type="text" name="Password">
+        <button type="submit">Login</button>
+    </form>
+    <p>NEW PROJECT</p>
+    <form action="http://127.0.0.1:5000/project-new" method="post">
+        <label for="Name">Project Name</label>
+        <input type="text" name="Name">
+        <button type="submit">Create</button>
+    </form>
+    <p>NEW SEASON</p>
+    <form action="http://127.0.0.1:5000/project/season-new" method="post">
+        <label for="ProjectName">Project Name</label>
+        <input type="text" name="ProjectName">
+        <label for="Name">Season Name</label>
+        <input type="text" name="Name">
+        <label for="Description">Description</label>
+        <input type="text" name="Description">
+        <button type="submit">Create</button>
+    </form>
+</body>
+</html>
