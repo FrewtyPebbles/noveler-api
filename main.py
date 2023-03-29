@@ -126,10 +126,20 @@ def add_season():
     project = Project(request.form["ProjectName"], session)
     Name = request.form["Name"]
     Description = request.form["Description"]
-    project.add_season(Name, Description)
     return {
+        "success":project.add_season(Name, Description),
         **base_response
     }
+
+@app.route("/project/season-list", methods=["POST", "GET"])
+@verify_token
+def list_seasons():
+    project = Project(request.form["ProjectName"], session)
+    return {
+        "seasons":project.get_seasons(),
+        **base_response
+    }
+
 
 @app.route("/project/season/<int:season_number>/episode-new", methods=["POST", "GET"])
 @verify_token
@@ -137,7 +147,50 @@ def add_episode(season_number:int):
     project = Project(request.form["ProjectName"], session)
     Name = request.form["Name"]
     Description = request.form["Description"]
-    project.add_episode(season_number, Name, Description)
+    
     return {
+        "season number":season_number,
+        "success":project.add_episode(season_number, Name, Description),
+        **base_response
+    }
+
+@app.route("/project/season/episode-new", methods=["POST", "GET"])
+@verify_token
+def add_episode_with_form():
+    project = Project(request.form["ProjectName"], session)
+    Name = request.form["Name"]
+    Description = request.form["Description"]
+    season_number = request.form["Season"]
+    
+    return {
+        "season number":season_number,
+        "success":project.add_episode(season_number, Name, Description),
+        **base_response
+    }
+
+@app.route("/project/season/<int:season_number>/episode-list", methods=["POST", "GET"])
+@verify_token
+def list_episode(season_number:int):
+    project = Project(request.form["ProjectName"], session)
+    Name = request.form["Name"]
+    Description = request.form["Description"]
+    
+    return {
+        "season number":season_number,
+        "episodes":project.list_episodes(season_number, Name, Description),
+        **base_response
+    }
+
+@app.route("/project/season/episode-list", methods=["POST", "GET"])
+@verify_token
+def list_episode_with_form():
+    project = Project(request.form["ProjectName"], session)
+    Name = request.form["Name"]
+    Description = request.form["Description"]
+    season_number = request.form["Season"]
+    
+    return {
+        "season number":season_number,
+        "success":project.list_episodes(season_number, Name, Description),
         **base_response
     }

@@ -44,5 +44,31 @@
         <input type="text" name="Description">
         <button type="submit">Create</button>
     </form>
+    <p>NEW EPISODE</p>
+    <form action="http://127.0.0.1:5000/project/season/episode-new" method="post">
+        <label for="ProjectName">Project Name</label>
+        <input type="text" name="ProjectName">
+        <label for="Name">Episode Name</label>
+        <input type="text" name="Name">
+        <label for="Description">Description</label>
+        <input type="text" name="Description">
+        <label for="Season">Season Number</label>
+        <input type="number" name="Season">
+        <button type="submit">Create</button>
+    </form>
+    <p>LIST SEASONS</p>
+    <form action="http://127.0.0.1:5000/project/season-list" method="post">
+        <label for="ProjectName">Project Name</label>
+        <input type="text" name="ProjectName">
+        <button type="submit">List</button>
+    </form>
+    <p>LIST PROJECT BY MANAGER EMAIL</p>
+    <form action="http://127.0.0.1:5000/project-list-by-manager" method="post">
+        <label for="ProjectName">Project Name</label>
+        <input type="text" name="ProjectName">
+        <label for="Email">Manager Email</label>
+        <input type="text" name="Email">
+        <button type="submit">List</button>
+    </form>
 </body>
 </html>

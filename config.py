@@ -12,12 +12,12 @@ base_response = { "API_INFO" : {
 db_conf = {
     "host": "127.0.0.1",
     "port": 3306,
-    "user": "testing",
-    "password":"testing",
+    "user": "root",
+    "password":"12345",
     "charset": "utf8mb4",
     "cursorclass": pymysql.cursors.DictCursor,
     "client_flag": pymysql.constants.CLIENT.MULTI_STATEMENTS,
-    "database": "test_db"
+    "database": "noveler"
 }
 
 db_conn = pymysql.connect(**db_conf)
