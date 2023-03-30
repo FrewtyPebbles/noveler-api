@@ -85,3 +85,104 @@ CREATE TABLE IF NOT EXISTS episode (
     PRIMARY KEY (ID),
     CONSTRAINT SID_EN_P_uniq UNIQUE (SeasonID, EpisodeNumber, ProjectID)
 );
+
+CREATE TABLE IF NOT EXISTS script (
+    ID INT AUTO_INCREMENT NOT NULL,
+    Title VARCHAR(80),
+    Description text,
+    Content text NOT NULL,
+    EpisodeID INT NOT NULL,
+    FOREIGN KEY (EpisodeID) REFERENCES episode(ID),
+    PRIMARY KEY (ID)
+);
+
+--------------------------------------------------------------
+ -- LORE TABLES
+--------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS character (
+    ID INT AUTO_INCREMENT NOT NULL,
+    Name VARCHAR(80),
+    ShortSummary VARCHAR(255),
+    About text NOT NULL,
+    PRIMARY KEY (ID),
+);
+
+CREATE TABLE IF NOT EXISTS role (
+    ID INT AUTO_INCREMENT NOT NULL,
+    CharacterID INT NOT NULL,
+    Title VARCHAR(80) NOT NULL,
+    Description text,
+    PRIMARY KEY (ID),
+    FOREIGN KEY (CharacterID) REFERENCES character(ID)
+);
+
+CREATE TABLE IF NOT EXISTS relationship (
+    ID INT AUTO_INCREMENT NOT NULL,
+    CharacterID INT NOT NULL,
+    OtherCharacterID INT NOT NULL,
+    Title VARCHAR(80) NOT NULL,
+    Description text,
+    PRIMARY KEY (ID),
+    FOREIGN KEY (CharacterID) REFERENCES character(ID),
+    FOREIGN KEY (OtherCharacterID) REFERENCES character(ID)
+);
+
+CREATE TABLE IF NOT EXISTS place (
+    ID INT AUTO_INCREMENT NOT NULL,
+    Name varchar(80) NOT NULL,
+    ShortSummary VARCHAR(255),
+    Abstract text,
+    Description text NOT NULL,
+    PRIMARY KEY (ID)
+);
+
+CREATE TABLE IF NOT EXISTS live_in (
+    ID INT AUTO_INCREMENT NOT NULL,
+    CharacterID INT NOT NULL,
+    PlaceID INT NOT NULL,
+    RelationTitle VARCHAR(80),
+    RelationDescription TEXT,
+    PRIMARY KEY (ID),
+    FOREIGN KEY (CharacterID) REFERENCES character(ID),
+    FOREIGN KEY (PlaceID) REFERENCES place(ID)
+);
+
+CREATE TABLE IF NOT EXISTS place_in_place (
+    ID INT AUTO_INCREMENT NOT NULL,
+    InnerPlaceID INT NOT NULL,
+    ParentPlaceID INT NOT NULL,
+    RelationTitle VARCHAR(80),
+    RelationDescription TEXT,
+    PRIMARY KEY (ID),
+    FOREIGN KEY (InnerPlaceID) REFERENCES place(ID),
+    FOREIGN KEY (ParentPlaceID) REFERENCES place(ID)
+);
+
+CREATE TABLE IF NOT EXISTS event (
+    ID INT AUTO_INCREMENT NOT NULL,
+    Title VARCHAR(80) NOT NULL,
+    Time DATETIME NOT NULL,
+    Description TEXT,
+    PRIMARY KEY (ID)
+);
+
+CREATE TABLE IF NOT EXISTS in_event (
+    ID INT AUTO_INCREMENT NOT NULL,
+    EventID INT NOT NULL,
+    CharacterID INT NOT NULL,
+    RoleTitle VARCHAR(80),
+    Description TEXT,
+    PRIMARY KEY (ID),
+    FOREIGN KEY (EventID) REFERENCES event(ID),
+    FOREIGN KEY (CharacterID) REFERENCES character(ID)
+);
+
+CREATE TABLE IF NOT EXISTS event_in_place (
+    ID INT AUTO_INCREMENT NOT NULL,
+    PlaceID INT NOT NULL,
+    EventID INT NOT NULL,
+    PRIMARY KEY (ID),
+    FOREIGN KEY (PlaceID) REFERENCES place(ID),
+    FOREIGN KEY (EventID) REFERENCES event(ID)
+);

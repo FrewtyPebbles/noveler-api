@@ -1,3 +1,4 @@
+import datetime
 from config import *
 import hashlib
 from flask.sessions import SessionMixin
@@ -229,5 +230,211 @@ class Project:
                 return True
             except:
                 return False
-        
+            
+    def add_character(self, Name:str, ShortSummary:str, About:str):
+        try:
+            db_cursor.execute("""INSERT INTO character
+            (Name, ShortSummary, About)
+            VALUES (%s, %s, %s)
+            """, (Name, ShortSummary, About))
+            db_conn.commit()
+            return True
+        except:
+            return False
     
+    def add_character_role(self, Character:str, Title:str, Description:str = None):
+        try:
+            if Description == None:
+                db_cursor.execute("""INSERT INTO role (CharacterID, Title)
+                SELECT c.ID as "CharacterID", %s as "Title"
+                FROM character as c
+                WHERE c.Name = %s
+                """, (Title, Character))
+                db_conn.commit()
+            else:
+                db_cursor.execute("""INSERT INTO role (CharacterID, Title, Description)
+                SELECT c.ID as "CharacterID", %s as "Title", %s as "Description"
+                FROM character as c
+                WHERE c.Name = %s
+                """, (Title, Description, Character))
+                db_conn.commit()
+            return True
+        except:
+            return False
+    
+    def add_relationship(self, Character:str, OtherCharacter:str, Title:str, Description:str = None):
+        try:
+            if Description == None:
+                db_cursor.execute("""INSERT INTO relationship
+                (CharacterID, OtherCharacterID, Title)
+                SELECT c1.ID as "CharacterID", c2.ID as "OtherCharacterID", %s as "Title"
+                FROM character as c1, character as c2
+                WHERE c2.Name = %s
+                AND c1.Name = %s
+                """, (Title, OtherCharacter, Character))
+                db_conn.commit()
+            else:
+                db_cursor.execute("""INSERT INTO relationship
+                (CharacterID, OtherCharacterID, Title, Description)
+                SELECT c1.ID as "CharacterID", c2.ID as "OtherCharacterID", %s as "Title", %s as "Description"
+                FROM character as c1, character as c2
+                WHERE c2.Name = %s
+                AND c1.Name = %s
+                """, (Title, Description, OtherCharacter, Character))
+                db_conn.commit()
+            return True
+        except:
+            return False
+        
+    def add_place(self, Name:str, ShortSummary:str = None, Abstract:str = None, Description:str = ""):
+        try:
+            inserts = (Name,)
+            
+            if ShortSummary != None:inserts += (ShortSummary,)
+
+            if Abstract != None:inserts += (Abstract,)
+            
+            inserts += (Description,)
+
+            db_cursor.execute(f"""
+            INSERT INTO place
+            (
+                Name,
+                {", ShortSummary" if ShortSummary != None else ""}
+                {", Abstract" if Abstract != None else ""}
+                , Description
+            )
+            VALUES
+            (
+                %s
+                {", %s" if ShortSummary != None else ""}
+                {", %s" if Abstract != None else ""}
+                , %s
+            )
+            """, inserts)
+            db_conn.commit()
+            return True
+        except:
+            return False
+        
+    def add_live_in(self, Character:str, Place:str, RelationTitle:str = None, RelationDescription:str = None):
+        try:
+            inserts = ()
+                
+            if RelationTitle != None:inserts += (RelationTitle,)
+
+            if RelationDescription != None:inserts += (RelationDescription,)
+            
+            inserts += (Character, Place)
+            db_cursor.execute(f"""INSERT INTO live_in 
+            (
+                CharacterID,
+                PlaceID
+                {", RelationTitle" if RelationTitle != None else ""}
+                {", RelationDescription" if RelationDescription != None else ""}
+            )
+            SELECT c.ID as "CharacterID", p.ID as "PlaceID"{', %s as "RelationTitle"' if RelationTitle != None else ""}{', %s as "RelationDescription"' if RelationDescription != None else ""}
+            FROM character as c, place as p
+            WHERE c.Name = %s
+            AND p.Name = %s
+            """, inserts)
+            db_conn.commit()
+            return True
+        except:
+            return False
+        
+    def add_place_in_place(self, InnerPlace:str, ParentPlace:str, RelationTitle:str = None, RelationDescription:str = None):
+        try:
+            inserts = ()
+                
+            if RelationTitle != None:inserts += (RelationTitle,)
+
+            if RelationDescription != None:inserts += (RelationDescription,)
+            
+            inserts += (InnerPlace, ParentPlace)
+            db_cursor.execute(f"""INSERT INTO live_in 
+            (
+                InnerPlaceID,
+                ParentPlaceID,
+                {", RelationTitle" if RelationTitle != None else ""}
+                {", RelationDescription" if RelationDescription != None else ""}
+            )
+            SELECT p1.ID as "InnerPlaceID", p2.ID as "ParentPlaceID"{', %s as "RelationTitle"' if RelationTitle != None else ""}{', %s as "RelationDescription"' if RelationDescription != None else ""}
+            FROM place as p1, place as p2
+            WHERE p1.Name = %s
+            AND p2.Name = %s
+            """, inserts)
+            db_conn.commit()
+            return True
+        except:
+            return False
+        
+    def add_event(self, Title:str, Time:datetime.datetime, Description:str = None):
+        try:
+            inserts = (Title, Time)
+            
+            if Description != None:inserts += (Description,)
+
+            db_cursor.execute(f"""
+            INSERT INTO event
+            (
+                Title,
+                Time
+                {", Description" if Description != None else ""}
+            )
+            VALUES
+            (
+                %s,
+                %s
+                {", %s" if Description != None else ""}
+            )
+            """, inserts)
+            db_conn.commit()
+            return True
+        except:
+            return False
+        
+    def add_person_in_event(self, Event:str, Character:str, RoleTitle:str = None, Description:str = None):
+        try:
+            inserts = ()
+                
+            if RoleTitle != None:inserts += (RoleTitle,)
+
+            if Description != None:inserts += (Description,)
+            
+            inserts += (Event, Character)
+            db_cursor.execute(f"""INSERT INTO in_event 
+            (
+                EventID,
+                CharacterID
+                {", RoleTitle" if RoleTitle != None else ""}
+                {", Description" if Description != None else ""}
+            )
+            SELECT e.ID as "EventID", c.ID as "CharacterID"{', %s as "RoleTitle"' if RoleTitle != None else ""}{', %s as "Description"' if Description != None else ""}
+            FROM event as e, character as c
+            WHERE e.Title = %s
+            AND c.Name = %s
+            """, inserts)
+            db_conn.commit()
+            return True
+        except:
+            return False
+        
+    def add_event_in_place(self, Place:str, Event:str):
+        try:
+            inserts = (Event, Place)
+            db_cursor.execute(f"""INSERT INTO event_in_place 
+            (
+                PlaceID,
+                EventID
+            )
+            SELECT p.ID as "PlaceID", e.ID as "EventID"
+            FROM event as e, place as p
+            WHERE e.Title = %s
+            AND p.Name = %s
+            """, inserts)
+            db_conn.commit()
+            return True
+        except:
+            return False
+        
