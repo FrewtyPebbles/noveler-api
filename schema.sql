@@ -96,16 +96,12 @@ CREATE TABLE IF NOT EXISTS script (
     PRIMARY KEY (ID)
 );
 
---------------------------------------------------------------
- -- LORE TABLES
---------------------------------------------------------------
-
 CREATE TABLE IF NOT EXISTS character (
     ID INT AUTO_INCREMENT NOT NULL,
     Name VARCHAR(80),
     ShortSummary VARCHAR(255),
-    About text NOT NULL,
-    PRIMARY KEY (ID),
+    About TEXT NOT NULL,
+    PRIMARY KEY (ID)
 );
 
 CREATE TABLE IF NOT EXISTS role (

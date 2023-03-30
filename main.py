@@ -194,3 +194,111 @@ def list_episode_with_form():
         "success":project.list_episodes(season_number, Name, Description),
         **base_response
     }
+
+@app.route("/project/character-new", methods=["POST", "GET"])
+@verify_token
+def add_character():
+    project = Project(request.form["ProjectName"], session)
+    
+    return {
+        "success":project.add_character(request.form["Name"], request.form["ShortSummary"], request.form["About"]),
+        **base_response
+    }
+
+@app.route("/project/event-new", methods=["POST", "GET"])
+@verify_token
+def add_event():
+    project = Project(request.form["ProjectName"], session)
+    
+    return {
+        "success":project.add_event(request.form["Title"], request.form["Time"], request.form["Description"]),
+        **base_response
+    }
+
+@app.route("/project/place-new", methods=["POST", "GET"])
+@verify_token
+def add_event():
+    project = Project(request.form["ProjectName"], session)
+    
+    return {
+        "success":project.add_place(request.form["Name"], request.form["ShortSummary"], request.form["Abstract"], request.form["Description"]),
+        **base_response
+    }
+
+@app.route("/project/character/<str:character>/role-new", methods=["POST", "GET"])
+@verify_token
+def add_role(character:str):
+    project = Project(request.form["ProjectName"], session)
+    
+    return {
+        "success":project.add_character_role(character, request.form["Title"], request.form["Description"]),
+        **base_response
+    }
+
+@app.route("/project/character/<str:character>/relationship-new", methods=["POST", "GET"])
+@verify_token
+def add_relationship(character:str):
+    project = Project(request.form["ProjectName"], session)
+    
+    return {
+        "success":project.add_relationship(character, request.form["OtherCharacter"], request.form["Title"], request.form["Description"]),
+        **base_response
+    }
+
+@app.route("/project/character/<str:character>/lives-in-new", methods=["POST", "GET"])
+@verify_token
+def add_lives_in(character:str):
+    project = Project(request.form["ProjectName"], session)
+    
+    return {
+        "success":project.add_live_in(
+            character,
+            request.form["Place"],
+            request.form["RelationTitle"],
+            request.form["RelationDescription"]
+        ),
+        **base_response
+    }
+
+@app.route("/project/event/<str:Event>/in-event-new", methods=["POST", "GET"])
+@verify_token
+def add_lives_in(Event:str):
+    project = Project(request.form["ProjectName"], session)
+    
+    return {
+        "success":project.add_person_in_event(
+            Event,
+            request.form["Character"],
+            request.form["RoleTitle"],
+            request.form["Description"]
+        ),
+        **base_response
+    }
+
+@app.route("/project/place/<str:ParentPlace>/in-place-new", methods=["POST", "GET"])
+@verify_token
+def add_place_in_place(ParentPlace:str):
+    project = Project(request.form["ProjectName"], session)
+    
+    return {
+        "success":project.add_place_in_place(
+            request.form["InnerPlace"],
+            ParentPlace,
+            request.form["RelationTitle"],
+            request.form["RelationDescription"]
+        ),
+        **base_response
+    }
+
+@app.route("/project/place/<str:Place>/in-place-new", methods=["POST", "GET"])
+@verify_token
+def add_place_in_place(Place:str):
+    project = Project(request.form["ProjectName"], session)
+    
+    return {
+        "success":project.add_event_in_place(
+            Place,
+            request.form["Event"]
+        ),
+        **base_response
+    }
