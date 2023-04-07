@@ -1,39 +1,16 @@
 import datetime
+
+import jwt
 from config import *
 import hashlib
 from flask.sessions import SessionMixin
-from flask import session
+from flask import Request, session, request
 
-def proc_verify_token(session: SessionMixin):
-    if "Email" not in session:
-        return False
-    db_cursor.execute("SELECT Email, Password FROM account WHERE Email = %s", (session.get("Email"),))
-        
-    login_response = db_cursor.fetchone()
-    HAlg = hashlib.sha256(secrets["hash_hmac_key"].encode())
-    HAlg.update((login_response["Password"] + login_response["Email"]).encode())
-    
-    db_token = HAlg.hexdigest()
-    return db_token == session.get("TOKEN")
-
-def verify_token(func):
-    def wrapper(*args, **kwargs):
-        if proc_verify_token(session):
-            return func(*args, **kwargs)
-
-        else:
-            return {
-            "error":"Token invalid.",
-            "redirect":"login",
-            **base_response
-            }
-    wrapper.__name__ = func.__name__
-    return wrapper
 
 class Project:
-    def __init__(self, project:str, session:SessionMixin) -> None:
+    def __init__(self, project:str, jwt_data:dict) -> None:
         self.project = project
-        self.session = session
+        self.jwt_data = jwt_data
         db_cursor.execute("""
         SELECT ID from project WHERE Name = %s
         """, (self.project,))
